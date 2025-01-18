@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { USER } from './user.model';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -36,7 +37,7 @@ export class UsersService {
     },
   ];
 
-  findAll(role?: USER['role']) {
+  findAll(role?: CreateUserDto['role']) {
     if (role) {
       return this.users.filter((user) => user.role === role);
     }
@@ -47,7 +48,7 @@ export class UsersService {
     return this.users.find((user) => user.id === id);
   }
 
-  create(user: USER) {
+  create(user: CreateUserDto) {
     const newUserId = this.users.length + 1;
     const newUser = {
       id: newUserId,
@@ -59,7 +60,7 @@ export class UsersService {
     return this.users;
   }
 
-  update(id: number, userUpdate: Partial<USER>) {
+  update(id: number, userUpdate: UpdateUserDto) {
     const index = this.users.findIndex((user) => user.id === id);
     if (index === -1) {
       throw new Error(`User with id ${id} not found`);
@@ -74,12 +75,8 @@ export class UsersService {
   }
 
   delete(id: number) {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index === -1) {
-      throw new Error(`User with id ${id} not found`);
-    }
-
-    this.users.splice(index, 1);
+    this.users = this.users.filter(user => user.id !== id)
+    
     return this.users;
   }
 }
